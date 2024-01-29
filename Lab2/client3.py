@@ -1,3 +1,5 @@
+#interacts with the server3
+
 import socket
 HEADER = 64
 PORT = 5050
@@ -24,7 +26,13 @@ while True:
     password = input("Enter Password: ")
     send(id, password)
 
-    print(client.recv(2048).decode(FORMAT))
+  
+    response = client.recv(2048).decode(FORMAT)
+    if response == "Invalid ID or Password\n":
+        print(response)
+        continue
+
+    print(response)
 
     choice = input("Enter choice: ")
     send(id, password, choice)

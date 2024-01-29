@@ -1,3 +1,4 @@
+#(a) 1. Capital letter to Small letter conversion for a line of text. This problem interacts with client 1 and server 1.
 import socket
 import threading 
 

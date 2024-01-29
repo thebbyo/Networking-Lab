@@ -1,3 +1,7 @@
+# (a) 2. Capital letter to Small letter conversion for a line of text
+# ii. Send an integer and operation name (either ‘prime’ or ‘palindrome’) to the server and
+# check whether it’s a prime (or palindrome) or not . This problem interacts with client and server 2.
+
 import socket
 import threading 
 import utils

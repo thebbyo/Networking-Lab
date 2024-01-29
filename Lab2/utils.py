@@ -44,7 +44,7 @@ def getName(id, password):
         for j in range(len(user[i])):
             if user[i][j]["id"] == id and user[i][j]["password"] == password:
                 return user[i][j]["name"]
-    return -1
+    return False
 
 def getBalance(id, password):
     for i in range(len(user)):

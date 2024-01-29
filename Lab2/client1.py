@@ -1,3 +1,5 @@
+#interact with the server1 and server2
+
 import socket
 HEADER = 64
 PORT = 5050
