@@ -20,7 +20,7 @@ import random
 HEADER = 64
 PORT = 5050
 FORMAT = 'utf-8'
-DISCONNECTMESSAGE = "!DISCONNECT"
+DISCONNECT_MESSAGE = "!DISCONNECT"
 
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
@@ -30,8 +30,13 @@ print(SERVER)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
+# Initialize counters for successful and total transactions
+total_transactions = 0
+successful_transactions = 0
 
 def handleClient(conn, addr):
+    global total_transactions, successful_transactions  # Declare global variables
+
     print(f"[NEW CONNECTION] {addr} connected.")
 
     connected = True
@@ -41,7 +46,7 @@ def handleClient(conn, addr):
             msgLength = int(msgLength)
             msg = conn.recv(msgLength).decode(FORMAT)
 
-            if msg == DISCONNECTMESSAGE:
+            if msg == DISCONNECT_MESSAGE:
                 break
             if utils.getName(int(msg[0]), int(msg[1:5])) == False:
                 str = "Invalid ID or Password\n"
@@ -61,67 +66,82 @@ def handleClient(conn, addr):
                 msgLength = int(msgLength)
                 msg = conn.recv(msgLength).decode(FORMAT)
 
-                if msg == DISCONNECTMESSAGE:
+                if msg == DISCONNECT_MESSAGE:
                     break
+
+                total_transactions += 1  # Increment total transactions count
 
                 if msg[5] == "1":
                     str = f"Your balance is {utils.getBalance(int(msg[0]), int(msg[1:5]))}\n"
+                    str += f"Total transactions: {total_transactions}\n"
+                    str += f"Success rate: {successful_transactions/total_transactions:.2f}\n"
+                    str += f"Error rate: {(total_transactions-successful_transactions)/total_transactions:.2f}\n"
                     conn.send(str.encode(FORMAT))
 
                 elif msg[5] == "2":
                     rand = random.randint(0, 10)
                     str = "Enter amount to deposit: "
-                    
+
                     conn.send(str.encode(FORMAT))
                     msgLength = conn.recv(HEADER).decode(FORMAT)
                     if msgLength:
                         msgLength = int(msgLength)
                         msg = conn.recv(msgLength).decode(FORMAT)
 
-                        if msg == DISCONNECTMESSAGE:
+                        if msg == DISCONNECT_MESSAGE:
                             break
                         if rand > 5:
                             utils.deposit(int(msg[0]), int(msg[1:5]), int(msg[5:]))
+                            successful_transactions += 1  # Increment successful transactions count
                             str = f"Your balance is {utils.getBalance(int(msg[0]), int(msg[1:5]))}\n"
+                            str += f"Successful transactions: {successful_transactions}\n"  # Include successful transactions count
+                            str += f"Total transactions: {total_transactions}\n"
+                            str += f"Success rate: {successful_transactions/total_transactions:.2f}\n"
+                            str += f"Error rate: {(total_transactions-successful_transactions)/total_transactions:.2f}\n"
                             conn.send(str.encode(FORMAT))
-
                         else:
                             str = "Transaction failed\n"
-                            str+= f"Your balance is {utils.getBalance(int(msg[0]), int(msg[1:5]))}\n"
-                            str+= "Please try again\n"
+                            str += f"Your balance is {utils.getBalance(int(msg[0]), int(msg[1:5]))}\n"
+                            str += "Please try again\n"
+                            str += f"Total transactions: {total_transactions}\n"
+                            str += f"Success rate: {successful_transactions/total_transactions:.2f}\n"
+                            str += f"Error rate: {(total_transactions-successful_transactions)/total_transactions:.2f}\n"
                             conn.send(str.encode(FORMAT))
-                        
 
                 elif msg[5] == "3":
                     str = "Enter amount to withdraw: "
                     rand = random.randint(0, 10)
-                    
+
                     conn.send(str.encode(FORMAT))
                     msgLength = conn.recv(HEADER).decode(FORMAT)
                     if msgLength:
                         msgLength = int(msgLength)
                         msg = conn.recv(msgLength).decode(FORMAT)
 
-                        if msg == DISCONNECTMESSAGE:
+                        if msg == DISCONNECT_MESSAGE:
                             break
                         if rand > 5:
                             utils.withdraw(int(msg[0]), int(msg[1:5]), int(msg[5:]))
+                            successful_transactions += 1  # Increment successful transactions count
                             str = f"Your balance is {utils.getBalance(int(msg[0]), int(msg[1:5]))}\n"
+                            str += f"Successful transactions: {successful_transactions}\n"  # Include successful transactions count
+                            str += f"Total transactions: {total_transactions}\n"
+                            str += f"Success rate: {successful_transactions/total_transactions:.2f}\n"
+                            str += f"Error rate: {(total_transactions-successful_transactions)/total_transactions:.2f}\n"
                             conn.send(str.encode(FORMAT))
-                            
-                        
                         else:
                             str = "Transaction failed\n"
-                            str+= f"Your balance is {utils.getBalance(int(msg[0]), int(msg[1:5]))}\n"
-                            str+= "Please try again\n"
+                            str += f"Your balance is {utils.getBalance(int(msg[0]), int(msg[1:5]))}\n"
+                            str += "Please try again\n"
+                            str += f"Total transactions: {total_transactions}\n"
+                            str += f"Success rate: {successful_transactions/total_transactions:.2f}\n"
+                            str += f"Error rate: {(total_transactions-successful_transactions)/total_transactions:.2f}\n"
                             conn.send(str.encode(FORMAT))
-                            
 
                 elif msg[5] == "4":
                     break
 
     conn.close()
-
 
 def start():
     server.listen()
@@ -131,8 +151,9 @@ def start():
         thread = threading.Thread(target=handleClient, args=(conn, addr))
         thread.start()
         print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
+        
 
-
-print("[STARTING] server is starting...")
 
 start()
+
+
