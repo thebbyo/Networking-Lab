@@ -40,7 +40,7 @@ timeout = 2
 startTime = time.time()
 recWin = 50
 sentSize = 0
-dupAck = 0
+dupAck = 0,h                                                                      
 lastAck = 0
 
 while seqNum < dataLen:

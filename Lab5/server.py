@@ -54,6 +54,13 @@ while True:
         toSendAck = makeHeader(expectedSeqNum, ackNum, 1, 0, rwind)
         print(f"Sequence number {seqNum}, Acknowledgement number {ackNum}")
         clSocket.sendall(toSendAck)
+   
+   
+   
+   
+   
+   
+   
         startTime = time.time()
         continue
 
