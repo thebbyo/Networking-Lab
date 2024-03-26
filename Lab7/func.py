@@ -165,13 +165,14 @@ def main():
     server.listen()
     IP = socket.gethostbyname(socket.gethostname())
     print(f"[LISTENING] Server is listening on {IP}")
-    initial_msg_thread=threading.Thread(target=msgSend)
-    initial_msg_thread.start()
-    update_thread=threading.Thread(target=updateGraph)
-    update_thread.start()
-    while True:
-        conn, addr = server.accept()
-        thread = threading.Thread(target=handleClient, args=(conn, addr))
-        thread.start()
+    
+    # Create a thread pool for handling client connections
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        initial_msg_thread = executor.submit(msgSend)
+        update_thread = executor.submit(updateGraph)
+        
+        while True:
+            conn, addr = server.accept()
+            executor.submit(handleClient, conn, addr)
 
 
