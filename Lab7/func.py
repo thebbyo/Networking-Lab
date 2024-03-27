@@ -40,7 +40,6 @@ def initialGraph():
                     G[dest] = {}
                 G[dest][src] = int(cost)
 
-    print("Graph:", G)
     nodeCost, parentsMap = dijkstra(G, curr)
     printCost(nodeCost, parentsMap)
 
@@ -174,5 +173,4 @@ def main():
         while True:
             conn, addr = server.accept()
             executor.submit(handleClient, conn, addr)
-
 
